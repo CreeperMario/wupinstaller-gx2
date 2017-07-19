@@ -158,9 +158,9 @@ private:
     GuiFrame * currentTvFrame;
     GuiFrame * currentDrcFrame;
 
-    GuiImageData *pointerImgData[4];
-    GuiImage *pointerImg[4];
-    bool pointerValid[4];
+    GuiImageData *pointerImgData[5];
+    GuiImage *pointerImg[5];
+    bool pointerValid[5];
 	
 	CFolderList * folderList;
     BrowserWindow * browserWindow;

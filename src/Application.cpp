@@ -18,6 +18,7 @@
 #include "gui/FreeTypeGX.h"
 #include "gui/VPadController.h"
 #include "gui/WPadController.h"
+#include "gui/DVPadController.h"
 #include "resources/Resources.h"
 #include "sounds/SoundHandler.hpp"
 #include "utils/logger.h"
@@ -153,6 +154,8 @@ void Application::executeThread(void)
 		//! Read out inputs
 	    for(int i = 0; i < 5; i++)
         {
+            if(controller[i] == NULL) continue;
+            
             if(controller[i]->update(video->getTvWidth(), video->getTvHeight()) == false)
                 continue;
 			
@@ -166,8 +169,23 @@ void Application::executeThread(void)
 			
             //! update controller states
             mainWindow->update(controller[i]);
+            
+            //If the Y button on the GamePad is pressed, switch to DPAD mode and vice versa.
+            if((i == 0) && (controller[i]->data.buttons_d & GuiTrigger::BUTTON_Y))
+            {
+                if(controller[i]->isDPadMode)
+                {
+                    delete controller[i];
+                    controller[i] = new VPadController(GuiTrigger::CHANNEL_1);
+                }
+                else
+                {
+                    delete controller[i];
+                    controller[i] = new DVPadController(GuiTrigger::CHANNEL_1);
+                }
+            }
         }
-		
+        
         //! start rendering DRC
 	    video->prepareDrcRendering();
 	    mainWindow->drawDrc(video);
