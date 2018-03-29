@@ -276,6 +276,8 @@ void MainWindow::OnInstallWindowClosed(GuiElement *element)
 {
 	if(!gInstallMiimakerAsked)
 	{
+		delete folderList;
+		folderList = NULL;
 		SetBrowserWindow();
 		currentDrcFrame->bringToFront(&headerFrame);
 	}
