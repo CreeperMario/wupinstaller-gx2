@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ****************************************************************************/
 #include "BrowserWindow.h"
+#include "fs/sd_fat_devoptab.h"
 
 #define MAX_FOLDERS_PER_PAGE 3
 
@@ -33,9 +34,9 @@ BrowserWindow::BrowserWindow(int w, int h, CFolderList * list)
     , minusImageData(Resources::GetImageData("minus.png"))
 	, plusImg(plusImageData)
 	, minusImg(minusImageData)
-	, plusTxt("Select All", 42, glm::vec4(0.9f, 0.9f, 0.9f, 1.0f))
-	, minusTxt("Unselect All", 42, glm::vec4(0.9f, 0.9f, 0.9f, 1.0f))
-	, installTxt("Install", 42, glm::vec4(0.9f, 0.9f, 0.9f, 1.0f))
+	, plusTxt("'Un'Select All", 40, glm::vec4(0.9f, 0.9f, 0.9f, 1.0f))
+	, minusTxt("Refresh", 40, glm::vec4(0.9f, 0.9f, 0.9f, 1.0f))
+	, installTxt("Install", 40, glm::vec4(0.9f, 0.9f, 0.9f, 1.0f))
     , touchTrigger(GuiTrigger::CHANNEL_1, GuiTrigger::VPAD_TOUCH)
     , buttonATrigger(GuiTrigger::CHANNEL_1, GuiTrigger::BUTTON_A, true)
     , buttonUpTrigger(GuiTrigger::CHANNEL_1, GuiTrigger::BUTTON_UP | GuiTrigger::STICK_L_UP, true)
@@ -236,19 +237,21 @@ void BrowserWindow::OnPlusButtonClick(GuiButton *button, const GuiController *co
 			folderList->Select(i);
 			folderButtons[i].folderButton->check();
 		}
-	}
-}
-
-void BrowserWindow::OnMinusButtonClick(GuiButton *button, const GuiController *controller, GuiTrigger *trigger)
-{
-	for(int i = 0; i < buttonCount; i++)
-	{
-		if(folderList->IsSelected(i))
+		else if(folderList->IsSelected(i))
 		{
 			folderList->UnSelect(i);
 			folderButtons[i].folderButton->check();
 		}
 	}
+}
+
+void BrowserWindow::OnMinusButtonClick(GuiButton *button, const GuiController *controller, GuiTrigger *trigger)
+{
+	unmount_sd_fat("sd");
+	usleep(50000);
+	mount_sd_fat("sd");
+	usleep(50000);
+	installButtonClicked(this);
 }
 
 void BrowserWindow::OnInstallButtonClick(GuiButton *button, const GuiController *controller, GuiTrigger *trigger)
