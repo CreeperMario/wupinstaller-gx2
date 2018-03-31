@@ -24,7 +24,6 @@
 #include "os_functions.h"
 #include "vpad_functions.h"
 
-EXPORT_DECL(void, VPADInit, void);
 EXPORT_DECL(void, VPADRead, int chan, VPADData *buffer, u32 buffer_size, s32 *error);
 
 void InitVPadFunctionPointers(void)
@@ -33,7 +32,6 @@ void InitVPadFunctionPointers(void)
     unsigned int vpad_handle;
     OSDynLoad_Acquire("vpad.rpl", &vpad_handle);
 
-    OS_FIND_EXPORT(vpad_handle, VPADInit);
     OS_FIND_EXPORT(vpad_handle, VPADRead);
 }
 

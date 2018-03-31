@@ -19,6 +19,7 @@
 #include "InstallWindow.h"
 #include "MainWindow.h"
 #include "utils/StringTools.h"
+#include "system/power.h"
 #include "common/retain_vars.h"
 #include "common/common.h"
 
@@ -44,7 +45,7 @@ InstallWindow::InstallWindow(CFolderList * list)
 	
 	folderCount = folderList->GetSelectedCount();
 	
-	if(gInstallMiimakerAsked)
+	if(gMode == WUP_MODE_MII_MAKER_INSTALL)
 	{
 		target = gTarget;
 		
@@ -115,7 +116,7 @@ void InstallWindow::OnDestinationChoice(GuiElement * element, int choice)
 	{
 		folderList->SetArray();
 		
-		gInstallMiimakerAsked = true;
+		gMode = WUP_MODE_MII_MAKER_INSTALL;
 		gTarget = target;
 		OnCloseWindow(this, 0);
 		
@@ -153,7 +154,12 @@ void InstallWindow::OnCloseTvProgressEffectFinish(GuiElement * element)
 void InstallWindow::executeThread()
 {
 	Application::instance()->exitDisable();
+	
 	canceled = false;
+	
+	bool APD_enabled = isEnabledAutoPowerDown();
+	if(APD_enabled)
+		disableAutoPowerDown();
 	
 	int total = folderList->GetSelectedCount();
 	int pos = 1;
@@ -185,6 +191,9 @@ void InstallWindow::executeThread()
 		
 		pos++;
 	}
+	
+	if(APD_enabled)
+		enableAutoPowerDown();
 	
 	Application::instance()->exitEnable();
 }
@@ -426,7 +435,7 @@ void InstallWindow::OnOpenEffectFinish(GuiElement *element)
 	element->effectFinished.disconnect(this);
 	element->clearState(GuiElement::STATE_DISABLED);
 	
-	if(gInstallMiimakerAsked)
+	if(gMode == WUP_MODE_MII_MAKER_INSTALL)
 	{
 		startInstalling();
 	}

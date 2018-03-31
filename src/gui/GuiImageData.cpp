@@ -87,12 +87,12 @@ void GuiImageData::loadImage(const u8 *img, int imgSize, int textureClamp, int t
 		//! not needed for now therefore comment out to safe ELF size
 		//! if needed uncomment, adds 200 kb to the ELF size
 		// IMAGE_JPEG
-		gdImg = gdImageCreateFromJpegPtr(imgSize, (u8*) img);
+		//gdImg = gdImageCreateFromJpegPtr(imgSize, (u8*) img);
 	}
 	else if (img[0] == 'B' && img[1] == 'M')
 	{
 		// IMAGE_BMP
-		gdImg = gdImageCreateFromBmpPtr(imgSize, (u8*) img);
+		//gdImg = gdImageCreateFromBmpPtr(imgSize, (u8*) img);
 	}
 	else if (img[0] == 0x89 && img[1] == 'P' && img[2] == 'N' && img[3] == 'G')
 	{
@@ -103,7 +103,7 @@ void GuiImageData::loadImage(const u8 *img, int imgSize, int textureClamp, int t
 	else if(img[0] == 0x00)
 	{
 		// Try loading TGA image
-		gdImg = gdImageCreateFromTgaPtr(imgSize, (u8*) img);
+		//gdImg = gdImageCreateFromTgaPtr(imgSize, (u8*) img);
 	}
 
 	if(gdImg == 0)

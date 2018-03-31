@@ -185,12 +185,12 @@ void MainWindow::SetupMainView()
 	currentDrcFrame->effectFinished.connect(this, &MainWindow::OnOpenEffectFinish);
 	currentDrcFrame->append(&bgParticleImg);
 	
-	if(!gInstallMiimakerAsked)
+	if(gMode != WUP_MODE_MII_MAKER_INSTALL)
 		SetBrowserWindow();
 	
 	SetDrcHeader();
 	
-	if(!gInstallMiimakerAsked && (folderList == NULL))
+	if((gMode != WUP_MODE_MII_MAKER_INSTALL) && (folderList == NULL))
 	{
 		MessageBox * messageBox = new MessageBox(MessageBox::BT_OK, MessageBox::IT_ICONERROR, false);
 		messageBox->setState(GuiElement::STATE_DISABLED);
@@ -250,6 +250,7 @@ void MainWindow::SetBrowserWindow()
 	browserWindow->setAlignment(ALIGN_LEFT | ALIGN_MIDDLE);
 	browserWindow->setPosition(50, 0);
 	browserWindow->installButtonClicked.connect(this, &MainWindow::OnInstallButtonClicked);
+	browserWindow->minusButtonClicked.connect(this, &MainWindow::OnMinusButtonClick);
 	browserWindow->setState(GuiElement::STATE_DISABLED);
 	browserWindow->setEffect(EFFECT_FADE, 10, 255);
 	browserWindow->effectFinished.connect(this, &MainWindow::OnOpenEffectFinish);
@@ -266,6 +267,18 @@ void MainWindow::OnInstallButtonClicked(GuiElement *element)
 	installWindow->installWindowClosed.connect(this, &MainWindow::OnInstallWindowClosed);
 }
 
+void MainWindow::OnMinusButtonClick(GuiElement *element)
+{
+	browserWindow->setEffect(EFFECT_FADE, -10, 255);
+	browserWindow->setState(GuiElement::STATE_DISABLED);
+	browserWindow->effectFinished.connect(this, &MainWindow::OnBrowserCloseEffectFinish);
+
+	
+	refreshWindow = new RefreshWindow(folderList);
+	refreshWindow->refreshWindowClosed.connect(this, &MainWindow::OnRefreshWindowClosed);
+	
+}
+
 void MainWindow::OnBrowserCloseEffectFinish(GuiElement *element)
 {
 	//! remove element from draw list and push to delete queue
@@ -274,8 +287,23 @@ void MainWindow::OnBrowserCloseEffectFinish(GuiElement *element)
 }
 void MainWindow::OnInstallWindowClosed(GuiElement *element)
 {
-	if(!gInstallMiimakerAsked)
+	if(gMode != WUP_MODE_MII_MAKER_INSTALL)
 	{
+		SetBrowserWindow();
+		currentDrcFrame->bringToFront(&headerFrame);
+	}
+	else
+	{
+		Application::instance()->quit();
+	}
+}
+
+void MainWindow::OnRefreshWindowClosed(GuiElement *element)
+{
+	if(gMode != WUP_MODE_MII_MAKER_INSTALL)
+	{
+		delete folderList;
+		folderList = NULL;
 		SetBrowserWindow();
 		currentDrcFrame->bringToFront(&headerFrame);
 	}
@@ -292,7 +320,7 @@ void MainWindow::OnErrorMessageBoxClick(GuiElement *element, int ok)
 
 void MainWindow::OnMiiMakerInstallWindowClosed(GuiElement *element)
 {
-	gInstallMiimakerFinished = true;
+	gMode = WUP_MODE_MII_MAKER_FINISH;
 	Application::instance()->quit();
 }
 
@@ -302,7 +330,7 @@ void MainWindow::OnOpenEffectFinish(GuiElement *element)
 	element->effectFinished.disconnect(this);
 	element->clearState(GuiElement::STATE_DISABLED);
 	
-	if(gInstallMiimakerAsked && folderList == NULL)
+	if((gMode == WUP_MODE_MII_MAKER_INSTALL) && folderList == NULL)
 	{
 		folderList = new CFolderList();
 		folderList->GetFromArray();

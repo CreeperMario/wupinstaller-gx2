@@ -59,26 +59,15 @@ EXPORT_DECL(int, OSTryLockMutex, void* mutex);
 //! System functions
 //!----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 EXPORT_DECL(u64, OSGetTitleID, void);
-EXPORT_DECL(int, OSGetPFID, void);
-EXPORT_DECL(void, OSShutdown, void);
-EXPORT_DECL(void, __Exit, int);
+EXPORT_DECL(void, __Exit, void);
 EXPORT_DECL(void, OSFatal, const char* msg);
 EXPORT_DECL(void, OSSetExceptionCallback, u8 exceptionType, exception_callback newCallback);
 EXPORT_DECL(void, DCFlushRange, const void *addr, u32 length);
-EXPORT_DECL(void, DCInvalidateRange, const void *addr, u32 length);
 EXPORT_DECL(void, ICInvalidateRange, const void *addr, u32 length);
 EXPORT_DECL(void*, OSEffectiveToPhysical, const void*);
 EXPORT_DECL(int, __os_snprintf, char* s, int n, const char * format, ...);
 EXPORT_DECL(void*, OSAllocFromSystem, int size, int align);
 EXPORT_DECL(void, OSFreeToSystem, void *ptr);
-
-EXPORT_DECL(void, OSScreenInit, void);
-EXPORT_DECL(unsigned int, OSScreenGetBufferSizeEx, unsigned int bufferNum);
-EXPORT_DECL(int, OSScreenSetBufferEx, unsigned int bufferNum, void * addr);
-EXPORT_DECL(int, OSScreenClearBufferEx, unsigned int bufferNum, unsigned int temp);
-EXPORT_DECL(int, OSScreenFlipBuffersEx, unsigned int bufferNum);
-EXPORT_DECL(int, OSScreenPutFontEx, unsigned int bufferNum, unsigned int posX, unsigned int posY, const char * buffer);
-EXPORT_DECL(int, OSScreenEnableEx, unsigned int bufferNum, int enable);
 
 //!----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //! MCP functions
@@ -111,10 +100,11 @@ EXPORT_DECL(void *, MEMDestroyExpHeap, int heap);
 EXPORT_DECL(void, MEMFreeToExpHeap, int heap, void* ptr);
 
 //!----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-//! Loader functions (not real rpl)
+//! Energy Saver functions
 //!----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-EXPORT_DECL(int, LiWaitIopComplete, int unknown_syscall_arg_r3, int * remaining_bytes);
-EXPORT_DECL(int, LiWaitIopCompleteWithInterrupts, int unknown_syscall_arg_r3, int * remaining_bytes);
+EXPORT_DECL(int, IMEnableAPD, void);
+EXPORT_DECL(int, IMDisableAPD, void);
+EXPORT_DECL(int, IMIsAPDEnabled, int * result);
 
 void InitOSFunctionPointers(void)
 {
@@ -132,25 +122,15 @@ void InitOSFunctionPointers(void)
     //!----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     OS_FIND_EXPORT(coreinit_handle, OSFatal);
     OS_FIND_EXPORT(coreinit_handle, OSGetTitleID);
-    OS_FIND_EXPORT(coreinit_handle, OSGetPFID);
     OS_FIND_EXPORT(coreinit_handle, OSSetExceptionCallback);
     OS_FIND_EXPORT(coreinit_handle, DCFlushRange);
-    OS_FIND_EXPORT(coreinit_handle, DCInvalidateRange);
     OS_FIND_EXPORT(coreinit_handle, ICInvalidateRange);
     OS_FIND_EXPORT(coreinit_handle, OSEffectiveToPhysical);
     OS_FIND_EXPORT(coreinit_handle, __os_snprintf);
     OS_FIND_EXPORT(coreinit_handle, OSAllocFromSystem);
     OS_FIND_EXPORT(coreinit_handle, OSFreeToSystem);
-    OS_FIND_EXPORT(coreinit_handle, OSShutdown);
-    OSDynLoad_FindExport(coreinit_handle, 0, "exit", &__Exit);
-
-    OS_FIND_EXPORT(coreinit_handle, OSScreenInit);
-    OS_FIND_EXPORT(coreinit_handle, OSScreenGetBufferSizeEx);
-    OS_FIND_EXPORT(coreinit_handle, OSScreenSetBufferEx);
-    OS_FIND_EXPORT(coreinit_handle, OSScreenClearBufferEx);
-    OS_FIND_EXPORT(coreinit_handle, OSScreenFlipBuffersEx);
-    OS_FIND_EXPORT(coreinit_handle, OSScreenPutFontEx);
-    OS_FIND_EXPORT(coreinit_handle, OSScreenEnableEx);
+    OSDynLoad_FindExport(coreinit_handle, 0, "_Exit", &__Exit);
+	
     //!----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     //! Thread functions
     //!----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -203,5 +183,12 @@ void InitOSFunctionPointers(void)
     OS_FIND_EXPORT(coreinit_handle, MEMCreateExpHeapEx);
     OS_FIND_EXPORT(coreinit_handle, MEMDestroyExpHeap);
     OS_FIND_EXPORT(coreinit_handle, MEMFreeToExpHeap);
+	
+	//!----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    //! Energy Saver functions
+    //!----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    OS_FIND_EXPORT(coreinit_handle, IMEnableAPD);
+    OS_FIND_EXPORT(coreinit_handle, IMDisableAPD);
+    OS_FIND_EXPORT(coreinit_handle, IMIsAPDEnabled);
 }
 

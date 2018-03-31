@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (C) 2015 Dimok
+ * Copyright (C) 2017 Dj_Skual
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,28 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ****************************************************************************/
-#ifndef _PROGRESS_WINDOW_H_
-#define _PROGRESS_WINDOW_H_
+#ifndef __POWER_H_
+#define __POWER_H_
 
-#include "gui/Gui.h"
+bool isEnabledAutoPowerDown();
+bool disableAutoPowerDown();
+bool enableAutoPowerDown();
 
-class ProgressWindow : public GuiFrame, public sigslot::has_slots<>
-{
-public:
-    ProgressWindow(const std::string & title);
-    virtual ~ProgressWindow();
-
-    void setProgress(f32 percent);
-    void setTitle(const std::string & title);
-    void setInfo(const std::string & info);
-	
-private:
-	GuiText titleText;
-	GuiText infoText;
-    GuiImageData *bgImageData;
-    GuiImage bgImage;
-    GuiImage progressImageBlack;
-    GuiImage progressImageColored;
-};
-
-#endif //_PROGRESS_WINDOW_H_
+#endif // __POWER_H_

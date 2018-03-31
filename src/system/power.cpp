@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (C) 2015 Dimok
+ * Copyright (C) 2017 Dj_Skual
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,28 +14,48 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ****************************************************************************/
-#ifndef _PROGRESS_WINDOW_H_
-#define _PROGRESS_WINDOW_H_
+#include "dynamic_libs/os_functions.h"
+#include "utils/logger.h"
+#include "power.h"
 
-#include "gui/Gui.h"
-
-class ProgressWindow : public GuiFrame, public sigslot::has_slots<>
+bool isEnabledAutoPowerDown()
 {
-public:
-    ProgressWindow(const std::string & title);
-    virtual ~ProgressWindow();
-
-    void setProgress(f32 percent);
-    void setTitle(const std::string & title);
-    void setInfo(const std::string & info);
+	bool enabled = false;
+	int apd_enabled = 0;
 	
-private:
-	GuiText titleText;
-	GuiText infoText;
-    GuiImageData *bgImageData;
-    GuiImage bgImage;
-    GuiImage progressImageBlack;
-    GuiImage progressImageColored;
-};
+	IMIsAPDEnabled(&apd_enabled);
+	
+	if(apd_enabled)
+	{
+		enabled = true;
+		log_printf("Auto Power Down enabled\n");
+	}
+	
+	return enabled;
+}
 
-#endif //_PROGRESS_WINDOW_H_
+bool disableAutoPowerDown()
+{
+	bool res = false;
+	
+	if(IMDisableAPD() == 0) //!APD disabled
+	{
+		res = true;
+		log_printf("Auto Power Down disabled\n");
+	}
+	
+	return res;
+}
+
+bool enableAutoPowerDown()
+{
+	bool res = false;
+	
+	if(IMEnableAPD() == 0) //!APD enabled
+	{
+		res = true;
+		log_printf("Auto Power Down re-enabled\n");
+	}
+	
+	return res;
+}
