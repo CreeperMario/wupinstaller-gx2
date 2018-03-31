@@ -32,7 +32,7 @@ then
 echo "Generating filelist.h for $count files." >&2
 cat <<EOF > $outFile
 /****************************************************************************
- * Loadiine resource files.
+ * WUP Installer GX2 resource files.
  * This file is generated automatically.
  * Includes $count files.
  *

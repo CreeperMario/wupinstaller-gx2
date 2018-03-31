@@ -25,8 +25,6 @@
 #include "os_functions.h"
 #include "ax_functions.h"
 
-unsigned int sound_handle __attribute__((section(".data"))) = 0;
-
 EXPORT_DECL(void, AXInitWithParams, u32 * params);
 EXPORT_DECL(void, AXInit, void);
 EXPORT_DECL(void, AXQuit, void);
@@ -49,8 +47,9 @@ EXPORT_DECL(u32, AXGetVoiceLoopCount, void *v);
 EXPORT_DECL(void, AXSetVoiceEndOffset, void *v, u32 offset);
 EXPORT_DECL(void, AXSetVoiceLoopOffset, void *v, u32 offset);
 
-void InitAcquireAX(void)
+void InitAXFunctionPointers(void)
 {
+    unsigned int sound_handle = 0;
     unsigned int *funcPointer = 0;
 
     if(OS_FIRMWARE >= 400)
@@ -69,13 +68,6 @@ void InitAcquireAX(void)
         OSDynLoad_Acquire("snd_core.rpl", &sound_handle);
         OS_FIND_EXPORT(sound_handle, AXInit);
     }
-}
-
-void InitAXFunctionPointers(void)
-{
-    unsigned int *funcPointer = 0;
-
-    InitAcquireAX();
 
     OS_FIND_EXPORT(sound_handle, AXQuit);
     OS_FIND_EXPORT(sound_handle, AXVoiceBegin);

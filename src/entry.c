@@ -6,6 +6,8 @@
 #include "utils/logger.h"
 #include "main.h"
 
+static volatile u64 currentTitleID = 0;
+
 int __entry_menu(int argc, char **argv)
 {
 	//! do OS (for acquire) and sockets first so we got logging
@@ -13,22 +15,22 @@ int __entry_menu(int argc, char **argv)
 	InitSocketFunctionPointers();
 	
 	log_init(WUP_LOGGER_IP);
-	log_print("Starting WUP Installer GX2 " WUP_GX2_VERSION "\n");
+	log_printf("\nStarting WUP Installer GX2 %s\n", WUP_GX2_VERSION);
 	
 	InitSysFunctionPointers();
 	
 	//! *******************************************************************
 	//! *           Check from where our application is started           *
 	//! *******************************************************************
-	if(!gInstallMiimakerAsked)
+	if(gMode == WUP_MODE_UNKNOW)
 	{
-		gCurrentTitleId = OSGetTitleID();
+		currentTitleID = OSGetTitleID();
 		
-		if (gCurrentTitleId == 0x000500101004A200 || // mii maker eur
-			gCurrentTitleId == 0x000500101004A100 || // mii maker usa
-			gCurrentTitleId == 0x000500101004A000)	 // mii maker jpn
+		if (currentTitleID == 0x000500101004A200 || //! mii maker eur
+			currentTitleID == 0x000500101004A100 || //! mii maker usa
+			currentTitleID == 0x000500101004A000)	//! mii maker jpn
 			gMode = WUP_MODE_MII_MAKER;
-		else				 //0x0005000013374842	 // hbl channel
+		else			   //!0x0005000013374842	//! hbl channel
 			gMode = WUP_MODE_HBC;
 	}
 	
@@ -37,22 +39,21 @@ int __entry_menu(int argc, char **argv)
 	//! *******************************************************************
 	Menu_Main();
 	
-	if(gInstallMiimakerAsked)
+	int result = EXIT_SUCCESS;
+	
+	if(gMode == WUP_MODE_MII_MAKER_INSTALL)
 	{
-		if(!gInstallMiimakerFinished)
-		{
-			SYSLaunchMenu();
-		}
-		else
-		{
-			gInstallMiimakerAsked = false;
-			gInstallMiimakerFinished = false;
-			
-			SYSLaunchTitle(gCurrentTitleId);
-		}
+		SYSLaunchMenu();
 		
-		log_deinit();
-		return EXIT_RELAUNCH_ON_LOAD;
+		result = EXIT_RELAUNCH_ON_LOAD;
+	}
+	else if(gMode == WUP_MODE_MII_MAKER_FINISH)
+	{
+		gMode = WUP_MODE_MII_MAKER;
+		
+		SYSLaunchTitle(currentTitleID);
+		
+		result = EXIT_RELAUNCH_ON_LOAD;
 	}
 	
 	//! *******************************************************************
@@ -60,5 +61,5 @@ int __entry_menu(int argc, char **argv)
 	//! *******************************************************************
 	log_deinit();
 	
-	return EXIT_SUCCESS;
+	return result;
 }

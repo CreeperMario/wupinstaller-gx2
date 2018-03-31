@@ -106,7 +106,6 @@ void InitFSFunctionPointers(void)
     OS_FIND_EXPORT(coreinit_handle, FSMakeDir);
     OS_FIND_EXPORT(coreinit_handle, FSMakeDirAsync);
 
-
     OS_FIND_EXPORT(coreinit_handle, FSOpenFile);
     OS_FIND_EXPORT(coreinit_handle, FSOpenFileAsync);
     OS_FIND_EXPORT(coreinit_handle, FSReadFile);

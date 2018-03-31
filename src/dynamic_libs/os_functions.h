@@ -100,28 +100,14 @@ extern int (* OSTryLockMutex)(void* mutex);
 //! System functions
 //!----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 extern u64 (* OSGetTitleID)(void);
-extern int (* OSGetPFID)(void);
-extern void (* OSShutdown)(void);
-extern void (* __Exit)(int);
+extern void (* __Exit)(void);
 extern void (* OSFatal)(const char* msg);
 extern void (* DCFlushRange)(const void *addr, u32 length);
-extern void (* DCInvalidateRange)(const void *addr, u32 length);
 extern void (* ICInvalidateRange)(const void *addr, u32 length);
 extern void* (* OSEffectiveToPhysical)(const void*);
 extern int (* __os_snprintf)(char* s, int n, const char * format, ...);
 extern void * (* OSAllocFromSystem)(int size, int align);
 extern void (* OSFreeToSystem)(void *ptr);
-
-//!----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-//! Screen functions
-//!----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-extern void (*OSScreenInit)(void);
-extern unsigned int (*OSScreenGetBufferSizeEx)(unsigned int bufferNum);
-extern int (*OSScreenSetBufferEx)(unsigned int bufferNum, void * addr);
-extern int (*OSScreenClearBufferEx)(unsigned int bufferNum, unsigned int temp);
-extern int (*OSScreenFlipBuffersEx)(unsigned int bufferNum);
-extern int (*OSScreenPutFontEx)(unsigned int bufferNum, unsigned int posX, unsigned int posY, const char * buffer);
-extern int (*OSScreenEnableEx)(unsigned int bufferNum, int enable);
 
 //!----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //! MCP functions
@@ -140,6 +126,12 @@ extern int (*IOS_IoctlvAsync)(unsigned int fd, unsigned int command, int cnt_in,
 typedef unsigned char (*exception_callback)(void * interruptedContext);
 extern void (* OSSetExceptionCallback)(u8 exceptionType, exception_callback newCallback);
 
+//!----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//! Energy Saver functions
+//!----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+extern int (*IMEnableAPD)(void);
+extern int (*IMDisableAPD)(void);
+extern int (*IMIsAPDEnabled)(int * result);
 
 #ifdef __cplusplus
 }

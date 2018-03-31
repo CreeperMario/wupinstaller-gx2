@@ -23,8 +23,8 @@
 #include "fs/CFolderList.hpp"
 #include "BrowserWindow.h"
 #include "InstallWindow.h"
+#include "RefreshWindow.h"
 #include "gui/GuiParticleImage.h"
-//#include "system/CMutex.h"
 
 class CVideo;
 
@@ -134,8 +134,10 @@ private:
 	void SetBrowserWindow(void);
 	
 	void OnInstallButtonClicked(GuiElement *element);
+	void OnMinusButtonClick(GuiElement *element);
 	void OnBrowserCloseEffectFinish(GuiElement *element);
 	void OnInstallWindowClosed(GuiElement *element);
+    void OnRefreshWindowClosed(GuiElement *element);
 	void OnErrorMessageBoxClick(GuiElement *element, int ok);
 	void OnMiiMakerInstallWindowClosed(GuiElement *element);
     void OnOpenEffectFinish(GuiElement *element);
@@ -166,6 +168,7 @@ private:
 	CFolderList * folderList;
     BrowserWindow * browserWindow;
 	InstallWindow * installWindow;
+    RefreshWindow * refreshWindow;
 
     CMutex guiMutex;
 };
